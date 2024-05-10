@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Demo jQuery - jQueryUI - CouchDB</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.5.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <h3>Ejemplo de Uso de Jquery + CouchDB</h3>
+    <div id="pestanias">
+        <ul>
+            <li><a href="#t1">Principal</a></li>
+        </ul>
+        <div id="t1">
+            <table id="tabla-info">
+                <thead>
+                    <tr>
+                        <th>Nombre de la Institución</th>
+                        <th>Provincia</th>
+                        <th>Cantón</th>
+                        <th>Zona Administrativa</th>
+                    </tr>
+                </thead>
+                <tbody id="datos-tabla">
+                    <!-- Aquí se mostrará la información obtenida -->
+                </tbody>
+            </table>
+            <br>
+            <button id="all-info">Toda la informacion</button>
+            <br><br>
+            <label for="canton">Cantón:</label>
+            <input type="text" id="canton">
+            <button id="buscar-canton">Buscar por cantón</button>
+            <br><br>
+            <label for="limite">Límite:</label>
+            <input type="text" id="limite">
+            <button id="buscar-limite">Buscar por límite</button>
+        </div>
+    </div>
+</body>
+<script>
+    $(document).ready(function () {
+        $("#pestanias").tabs();
+
+        // Función para cargar la información de la vista en una tabla HTML
+        function cargarInformacion(data) {
+            var tableRows = "";
+            data.forEach(function (row) {
+                tableRows += "<tr>";
+                tableRows += "<td>" + row.Nombre_Institucion + "</td>";
+                tableRows += "<td>" + row.Provincia + "</td>";
+                tableRows += "<td>" + row.Canton + "</td>";
+                tableRows += "<td>" + row.Zona_Administrativa + "</td>";
+                tableRows += "</tr>";
+            });
+            $("#datos-tabla").html(tableRows);
+        }
+
+        // Botón "Obtener toda la información"
+        $("#all-info").click(function () {
+            var canton = $("#canton").val();
+            $.ajax({
+                dataType: 'json',
+                url: "http://127.0.0.1:5984/instituciones/_design/vista001/_view/vista001?include_docs=true"
+            }).then(function (data) {
+                cargarInformacion(data.rows.map(function (row) { return row.doc; }));
+                console.log(row.doc)
+            });
+        });
+
+
+        // Botón "Buscar por cantón"
+        $("#buscar-canton").click(function () {
+            var canton = $("#canton").val();
+            $.ajax({
+                dataType: 'json',
+                url: "http://127.0.0.1:5984/instituciones/_design/vista001/_view/vista001?include_docs=true&key=\"" + canton + "\"" 
+            }).then(function (data) {
+                cargarInformacion(data.rows.map(function (row) { return row.doc; }));
+                console.log(data)
+            });
+
+            
+        });
+
+        // Botón "Buscar por límite"
+        $("#buscar-limite").click(function () {
+            var limite = parseInt($("#limite").val());
+            $.ajax({
+                dataType: 'json',
+                url: "http://127.0.0.1:5984/instituciones/_design/vista001/_view/vista001?include_docs=true&limit=" + limite
+            }).then(function (data) {
+                cargarInformacion(data.rows.map(function (row) { return row.doc; }));
+            });
+        });
+    });
+</script>
+
+</html>

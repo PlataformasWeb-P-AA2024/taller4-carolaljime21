@@ -10,3 +10,5 @@
   * Botón llamado **all información** ; debe presentar la información de la vista generada en una tabla html
   * Botón llamado **buscar por cantón** ; debe tomar el valor ingresado en una input-text y obtener de la vista solo los documentos que tengan en su llave el cantón ingresado; debe presentar la información de la vista generada en una tabla html
   * Botón llamado **buscar por límite** ; debe tomar el valor ingresado en una input-text y obtener de la vista solo el número de documentos se haya ingresado; debe presentar la información de la vista generada en una tabla html
+
+  curl -d @instituciones_0007.json -H "Content-type: application/json" -X POST http://127.0.0.1:5984/instituciones/_bulk_docs
